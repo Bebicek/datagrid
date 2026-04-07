@@ -1952,10 +1952,9 @@ class DataGrid extends Control
 
 			if (!in_array($key, $other_session_keys, true)) {
 				try {
-					$this->getFilter($key);
-
-					$this->filter[$key] = $value;
-
+					$stringKey = (string) $key;
+					$this->getFilter($stringKey);
+					$this->filter[$stringKey] = $value;
 				} catch (DataGridException $e) {
 					if ($this->strictSessionFilterValues) {
 						throw new DataGridFilterNotFoundException(
@@ -2523,7 +2522,7 @@ class DataGrid extends Control
 	}
 
 
-	public function handleChangeStatus(string $id, string $key, string $value): void
+	public function handleChangeStatus(string $id, string $key, ?string $value): void
 	{
 		if (!isset($this->columns[$key])) {
 			throw new DataGridException(sprintf('ColumnStatus[%s] does not exist', $key));
@@ -3225,12 +3224,27 @@ class DataGrid extends Control
 	 *
 	 * @return static
 	 */
-	public function setColumnsHideable(): self
+	public function setColumnsHideable(bool $canHideColumns = true): self
 	{
-		$this->canHideColumns = true;
-
+		$this->canHideColumns = $canHideColumns;
 		return $this;
 	}
+
+    /**
+     * @return Action[]|MultiAction[]
+     */
+    public function getActions(): array
+    {
+        return $this->actions;
+    }
+
+    /**
+     * @return ToolbarButton[]
+     */
+    public function getToolbarButtons(): array
+    {
+        return $this->toolbarButtons;
+    }
 
 
 	/********************************************************************************
